@@ -1,0 +1,21 @@
+[project]
+name = "expman"
+version = "0.1.0"
+description = "Manage your experiments exactly as you like"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "loguru>=0.7.0",
+    "polars>=1.0.0",
+    "pyyaml>=6.0",
+    "torch>=2.0.0",
+    "matplotlib>=3.7.0",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.27.0",
+    "pyarrow>=14.0.0",  # Required for polars parquet I/O
+    "torchview>=0.2.7",
+    "graphviz>=0.21",
+]
+
+[project.scripts]
+expman-ui = "expman.server:main"
