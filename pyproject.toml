@@ -19,4 +19,8 @@ dependencies = [
 ]
 
 [project.scripts]
-expman-ui = "expman.server:main"
+expMan = "expman.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["expman*"]
+exclude = ["experiments*"]

@@ -1,4 +1,4 @@
-# ExpMan
+# ExpMan (v0.1.0)
 
 `expman` is a lightweight, functional research experiment management library.
 
@@ -10,24 +10,15 @@
   - **Run Comparison**: Overlay metrics from multiple runs on interactive Plotly charts.
   - **Artifact Browser**: Browse and preview all experiment files including auto-generated model architecture graphs.
 
-## Setup
+## Installation
 
-1. **Install with uv**:
-   ```bash
-   uv init
-   uv add expman[viz]
-   # Or for local dev:
-   uv init
-   uv add loguru polars pyyaml torch matplotlib fastapi uvicorn pyarrow torchview
-   uv pip install -e .
-   ```
-   
-   > [!IMPORTANT]
-   > For model visualization:
-   > 1. Install graphviz: `sudo apt-get install graphviz` (Linux) or `brew install graphviz` (Mac)
-   > 2. Pass `input_size` to `exp.save_model` to auto-generate the SVG.
+```bash
+pip install expman
+```
 
-2. **Run an Experiment**:
+## Quick Start
+
+1. **Run an Experiment**:
    ```python
    from expman import Experiment
    import matplotlib.pyplot as plt
@@ -50,8 +41,14 @@
 
    For a complete example, check [examples/test_flow.py](examples/test_flow.py).
 
-3. **Launch Dashboard**:
+2. **Launch Dashboard**:
    ```bash
-   uv run python -m expman.server --experiments-dir ./experiments
+   expMan serve ./experiments
    ```
    Open [http://localhost:8000](http://localhost:8000)
+
+3. **Interactive Analysis**:
+   Load a run directly into a Python REPL with metrics and config pre-loaded:
+   ```bash
+   expMan load experiments/my_experiment/runs/run_001
+   ```

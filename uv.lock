@@ -179,7 +179,7 @@ requires-dist = [
     { name = "pyarrow", specifier = ">=14.0.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "torch", specifier = ">=2.0.0" },
-    { name = "torchview", git = "https://github.com/mert-kurttutan/torchview.git" },
+    { name = "torchview", specifier = ">=0.2.7" },
     { name = "uvicorn", specifier = ">=0.27.0" },
 ]
 
@@ -1112,9 +1112,13 @@ wheels = [
 [[package]]
 name = "torchview"
 version = "0.2.7"
-source = { git = "https://github.com/mert-kurttutan/torchview.git#edbe1fae97d94bb413c8fecace4f28b7ef9a59b0" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "graphviz" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f0/45/f76ac5a2a49f3a5831ddde2e7e6b58fe423b434075e812559976a2122560/torchview-0.2.7.tar.gz", hash = "sha256:c5898fd03d256333c9827000c1f83e1052fbcfc1066032d86b30d429dd942f7c", size = 25697, upload-time = "2025-04-22T20:47:27.49Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/17/66/b87d835f664f0f99a0bf1e2e294c45d286545fed35b96f2c99e700915dd9/torchview-0.2.7-py3-none-any.whl", hash = "sha256:c7f3a9d16138c20b606900ecbf46d01489f2b8c77ed97e71293883bc606c2be0", size = 26103, upload-time = "2025-04-22T20:47:26.12Z" },
 ]
 
 [[package]]
