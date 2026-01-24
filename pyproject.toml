@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "expman"
-version = "0.1.1"
+version = "0.1.2"
 description = "Manage your experiments exactly as you like"
 readme = "README.md"
 license = { text = "MIT" }

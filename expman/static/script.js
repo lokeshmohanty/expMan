@@ -23,6 +23,38 @@ const App = {
 
         // Setup auto-refresh
         setInterval(App.refreshData, 10000);
+
+        // Setup Plot Resize
+        const slider = document.getElementById('plot-size-slider');
+        if (slider) {
+            slider.addEventListener('input', (e) => App.updatePlotSize(e.target.value));
+        }
+    },
+
+    updatePlotSize: (size) => {
+        const container = document.getElementById('charts-container');
+        const label = document.getElementById('plot-size-label');
+        const ratio = 1.0; // Maintain 1:1 (Square) aspect ratio
+        const height = Math.round(size * ratio);
+
+        if (container) {
+            container.style.gridTemplateColumns = `repeat(auto-fill, minmax(${size}px, 1fr))`;
+
+            // Update height of all plot cards
+            const cards = container.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.style.minHeight = `${height}px`;
+                card.style.height = `${height}px`; // Force height for ratio
+            });
+        }
+        if (label) {
+            label.innerText = `${size}px`;
+        }
+
+        // Force Reflow for Plotly
+        const param = { autosize: true };
+        const plots = container.querySelectorAll('.js-plotly-plot');
+        plots.forEach(div => Plotly.relayout(div, param));
     },
 
     setTab: (tabName) => {
@@ -290,10 +322,15 @@ const App = {
 
         container.innerHTML = '';
 
+        const slider = document.getElementById('plot-size-slider');
+        const initialSize = slider ? slider.value : 300;
+        const initialHeight = Math.round(initialSize * 1.0); // Square aspect ratio
+
         allKeys.forEach(metric => {
             const div = document.createElement('div');
             div.className = 'card p-4 bg-white shadow-sm overflow-hidden';
-            div.style.minHeight = '450px';
+            div.style.minHeight = `${initialHeight}px`;
+            div.style.height = `${initialHeight}px`; // Force height for ratio
             container.appendChild(div);
 
             const traces = runs.map((runId, idx) => {
@@ -320,9 +357,9 @@ const App = {
                     xanchor: 'left'
                 },
                 autosize: true,
-                margin: { l: 60, r: 20, t: 60, b: 60 }, // Increased top/bottom margins
+                margin: { l: 60, r: 40, t: 60, b: 80 }, // Increased right and bottom margins
                 showlegend: true,
-                legend: { orientation: 'h', y: -0.15, x: 0.5, xanchor: 'center', bgcolor: 'rgba(255,255,255,0)' },
+                legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center', bgcolor: 'rgba(255,255,255,0)' }, // Adjusted legend position
                 xaxis: {
                     title: 'Step',
                     titlefont: { size: 12, color: '#64748b' },
@@ -353,7 +390,7 @@ const App = {
                     format: 'png',
                     filename: `${metric}_plot`,
                     height: 500,
-                    width: 700,
+                    width: 500, // Square export
                     scale: 2
                 }
             };
