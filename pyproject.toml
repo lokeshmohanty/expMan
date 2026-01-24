@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "expman"
-version = "0.1.0"
+version = "0.1.1"
 description = "Manage your experiments exactly as you like"
 readme = "README.md"
 license = { text = "MIT" }
@@ -13,11 +13,15 @@ dependencies = [
     "loguru>=0.7.0",
     "polars>=1.0.0",
     "pyyaml>=6.0",
-    "torch>=2.0.0",
     "matplotlib>=3.7.0",
     "fastapi>=0.110.0",
     "uvicorn>=0.27.0",
     "pyarrow>=14.0.0",  # Required for polars parquet I/O
+]
+
+[project.optional-dependencies]
+torch = [
+    "torch>=2.0.0",
     "torchview>=0.2.7",
     "graphviz>=0.21",
 ]

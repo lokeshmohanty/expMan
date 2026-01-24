@@ -12,8 +12,14 @@
 
 ## Installation
 
+**Basic Installation** (Lightweight, no Torch/Graphviz):
 ```bash
-pip install git+https://github.com/lokeshmohanty/expMan.git
+pip install git+https://github.com/lokeshmohanty/expManager.git
+```
+
+**Full Installation** (With PyTorch support for model saving & architecture graphs):
+```bash
+pip install "expman[torch] @ git+https://github.com/lokeshmohanty/expManager.git"
 ```
 
 ## Quick Start

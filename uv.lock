@@ -154,34 +154,39 @@ wheels = [
 
 [[package]]
 name = "expman"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
-    { name = "graphviz" },
     { name = "loguru" },
     { name = "matplotlib" },
     { name = "polars" },
     { name = "pyarrow" },
     { name = "pyyaml" },
+    { name = "uvicorn" },
+]
+
+[package.optional-dependencies]
+torch = [
+    { name = "graphviz" },
     { name = "torch" },
     { name = "torchview" },
-    { name = "uvicorn" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.110.0" },
-    { name = "graphviz", specifier = ">=0.21" },
+    { name = "graphviz", marker = "extra == 'torch'", specifier = ">=0.21" },
     { name = "loguru", specifier = ">=0.7.0" },
     { name = "matplotlib", specifier = ">=3.7.0" },
     { name = "polars", specifier = ">=1.0.0" },
     { name = "pyarrow", specifier = ">=14.0.0" },
     { name = "pyyaml", specifier = ">=6.0" },
-    { name = "torch", specifier = ">=2.0.0" },
-    { name = "torchview", specifier = ">=0.2.7" },
+    { name = "torch", marker = "extra == 'torch'", specifier = ">=2.0.0" },
+    { name = "torchview", marker = "extra == 'torch'", specifier = ">=0.2.7" },
     { name = "uvicorn", specifier = ">=0.27.0" },
 ]
+provides-extras = ["torch"]
 
 [[package]]
 name = "fastapi"

@@ -6,8 +6,16 @@ import uvicorn
 import os
 from pathlib import Path
 from .analyzer import ExperimentAnalyzer
-import torch
-import torchview
+try:
+    import torch
+except ImportError:
+    torch = None
+
+try:
+    import torchview
+except ImportError:
+    torchview = None
+
 import math
 
 app = FastAPI()

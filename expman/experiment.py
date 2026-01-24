@@ -3,7 +3,10 @@ from typing import Any, Dict, Optional
 import sys
 from loguru import logger
 import matplotlib.figure
-import torch
+try:
+    import torch
+except ImportError:
+    torch = None
 
 from . import utils
 
@@ -72,7 +75,7 @@ class Experiment:
         utils.save_metrics(self.metrics_file, [metrics])
         self.metrics_buffer = [] # Clear after write
 
-    def save_model(self, model: torch.nn.Module, filename: str = "model.pt", input_size: Optional[tuple] = None):
+    def save_model(self, model: Any, filename: str = "model.pt", input_size: Optional[tuple] = None):
         """
         Saves a pytorch model asynchronously.
         
@@ -82,6 +85,9 @@ class Experiment:
             input_size: Optional input size tuple (e.g., (1, 3, 224, 224)). 
                         If provided, an SVG graph of the model is also generated and saved.
         """
+        if torch is None:
+            self.logger.warning("Torch is not installed. Skipping model save.")
+            return
         import threading
         import copy
         

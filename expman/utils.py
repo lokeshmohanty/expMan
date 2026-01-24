@@ -3,7 +3,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 import yaml
 import polars as pl
-import torch
+try:
+    import torch
+except ImportError:
+    torch = None
+
 import matplotlib.figure
 import datetime
 
@@ -69,19 +73,28 @@ def load_metrics(path: Path) -> pl.DataFrame:
         return pl.DataFrame()
     return pl.read_parquet(path)
 
-def save_model(path: Path, model: torch.nn.Module) -> None:
+def save_model(path: Path, model: Any) -> None:
     """Saves a PyTorch model's state_dict."""
+    if torch is None:
+        raise ImportError("Torch is not installed. Cannot save model.")
     torch.save(model.state_dict(), path)
 
-def load_model(path: Path, model: torch.nn.Module, map_location: str = 'cpu') -> torch.nn.Module:
+def load_model(path: Path, model: Any, map_location: str = 'cpu') -> Any:
     """Loads a PyTorch model's state_dict."""
+    if torch is None:
+        raise ImportError("Torch is not installed. Cannot load model.")
     state_dict = torch.load(path, map_location=map_location)
     model.load_state_dict(state_dict)
     return model
 
-def save_model_graph(path: Path, model: torch.nn.Module, input_size: tuple) -> None:
+def save_model_graph(path: Path, model: Any, input_size: tuple) -> None:
     """Generates and saves a model architecture graph as SVG using torchview."""
-    from torchview import draw_graph
+    try:
+        from torchview import draw_graph
+    except ImportError:
+        # If torch is missing, this will fail too usually, but separating checks is good
+        raise ImportError("torchview is not installed. Cannot save model graph.")
+
     graph = draw_graph(model, input_size=input_size, graph_name="Model Architecture", roll=True)
     # torchview save_graph saves to a file but requires graphviz installed
     # It might save as .gv and .svg. Let's force it to just give us the svg content or save properly.
