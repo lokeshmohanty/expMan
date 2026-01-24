@@ -1,5 +1,7 @@
 # ExpMan: Experiment Manager
 
+![GitHub Release](https://img.shields.io/github/v/release/lokeshmohanty/expManager)
+
 `expman` is a lightweight, functional research experiment management library.
 
 ## Features
@@ -9,6 +11,11 @@
 - **Modern Web Dashboard**: 
   - **Run Comparison**: Overlay metrics from multiple runs on interactive Plotly charts.
   - **Artifact Browser**: Browse and preview all experiment files including auto-generated model architecture graphs.
+
+  - **Artifact Browser**: Browse and preview all experiment files including auto-generated model architecture graphs.
+
+  ![Dashboard Metrics](assets/dashboard-metrics.png)
+  ![Dashboard Artifacts](assets/dashboard-artifacts.png)
 
 ## Installation
 
@@ -58,3 +65,5 @@ pip install "expman[torch] @ git+https://github.com/lokeshmohanty/expManager.git
    ```bash
    expman load experiments/my_experiment/runs/run_001
    ```
+
+   ![Interactive Analysis Preview](assets/interactive_analysis_preview.png)
