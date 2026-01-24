@@ -1,33 +1,11 @@
-name: Create Release and Publish to PyPI
+name: Create Release
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build distribution 📦
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Build a binary wheel and a source tarball
-        run: |
-          uv pip install --system build
-          python -m build
-      - name: Store the distribution packages
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
-
   release:
-    name: Create Release Tag and Publish
-    needs: build
+    name: Create Release Tag
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -65,21 +43,3 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
-
-  publish-to-pypi:
-    name: Publish Python 🐍 distribution 📦 to PyPI
-    needs: release
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/expmanager
-    permissions:
-      id-token: write
-    steps:
-      - name: Download all the dists
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
-      - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1

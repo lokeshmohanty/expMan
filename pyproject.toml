@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "expmanager"
+name = "expman"
 version = "0.1.0"
 description = "Manage your experiments exactly as you like"
 readme = "README.md"
@@ -23,8 +23,8 @@ dependencies = [
 ]
 
 [project.scripts]
-expManager = "expmanager.cli:main"
+expman = "expman.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["expmanager*"]
+include = ["expman*"]
 exclude = ["experiments*"]
