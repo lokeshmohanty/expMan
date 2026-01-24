@@ -52,7 +52,7 @@ pip install "expman[torch] @ git+https://github.com/lokeshmohanty/expManager.git
    exp.save_model(model, "final.pt", input_size=(1, 3, 224, 224)) 
    ```
 
-   For a complete example, check [examples/test_flow.py](examples/test_flow.py).
+   For a complete example, check [examples/test_run.py](examples/test_run.py).
 
 2. **Launch Dashboard**:
    ```bash
