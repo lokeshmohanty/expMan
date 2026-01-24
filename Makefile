@@ -43,3 +43,14 @@ release: build
 		echo "3. Run 'gh release create v$(VERSION) dist/* --generate-notes'"; \
 		echo "----------------------------------------------------------------"; \
 	fi
+
+	@$(MAKE) publish
+
+publish: build
+	@if [ -z "$(PYPI_TOKEN)" ]; then \
+		echo "Error: PYPI_TOKEN environment variable is not set."; \
+		echo "Please export PYPI_TOKEN=pypi-xxxxxxxx"; \
+		exit 1; \
+	fi
+	@echo "Uploading to PyPI..."
+	uv run twine --with twine upload dist/* -u __token__ -p $(PYPI_TOKEN)
