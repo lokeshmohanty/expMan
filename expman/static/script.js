@@ -65,27 +65,59 @@ const App = {
         }
     },
 
+    refreshData: async () => {
+        if (!App.state.currentExperiment) return;
+
+        // Poll for new runs structure
+        await App.fetchRunsList(App.state.currentExperiment);
+
+        // Reload data for selected runs
+        for (let runId of App.state.selectedRuns) {
+            await App.loadRunData(runId);
+        }
+        App.renderDashboard();
+
+        const status = document.getElementById('refresh-indicator');
+        if (status) status.innerText = new Date().toLocaleTimeString();
+    },
+
     selectExperiment: async (name) => {
         App.state.currentExperiment = name;
         App.state.selectedRuns.clear();
         App.state.runsData = {};
+        await App.fetchRunsList(name);
+    },
 
-        const res = await fetch(`/api/experiments/${name}/runs`);
-        const runs = await res.json();
+    fetchRunsList: async (name) => {
+        try {
+            const res = await fetch(`/api/experiments/${name}/runs`);
+            const runs = await res.json();
 
-        const container = document.getElementById('runs-container');
-        container.innerHTML = runs.map(run => `
-            <div class="run-item group flex items-center justify-between p-2 rounded-md hover:bg-white hover:shadow-sm cursor-pointer transition-all border border-transparent hover:border-gray-200"
-                 onclick="App.toggleRun('${run}', this)">
-                <div class="flex items-center gap-2">
-                    <div class="w-4 h-4 rounded border border-gray-300 flex items-center justify-center checkbox transition-colors" id="check-${run}">
-                        <i class="ri-check-line text-white text-xs opacity-0"></i>
+            // Check if list changed to avoid unnecessary DOM thrashing (optional but good)
+            // For now, naive re-render is fine if we preserve selection state visually
+
+            const container = document.getElementById('runs-container');
+            container.innerHTML = runs.map(run => {
+                const isSelected = App.state.selectedRuns.has(run);
+                const activeClass = isSelected ? 'active' : '';
+                const checkBg = isSelected ? 'bg-brand-600 border-brand-600' : 'bg-transparent border-gray-600';
+                const iconOpacity = isSelected ? '' : 'opacity-0';
+
+                return `
+                <div class="run-item group flex items-center justify-between p-2 rounded-md cursor-pointer transition-all border border-transparent ${activeClass}"
+                     onclick="App.toggleRun('${run}', this)">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded border flex items-center justify-center checkbox transition-colors ${checkBg}" id="check-${run}">
+                            <i class="ri-check-line text-white text-xs ${iconOpacity}"></i>
+                        </div>
+                        <span class="text-sm font-medium label-text">${run}</span>
                     </div>
-                    <span class="text-sm text-gray-700 font-medium">${run}</span>
+                    <i class="ri-arrow-right-s-line text-gray-500 opacity-0 group-hover:opacity-100"></i>
                 </div>
-                <i class="ri-arrow-right-s-line text-gray-300 opacity-0 group-hover:opacity-100"></i>
-            </div>
-        `).join('');
+            `}).join('');
+        } catch (e) {
+            console.error("Failed to fetch runs", e);
+        }
     },
 
     toggleRun: async (runId, el) => {
@@ -95,13 +127,15 @@ const App = {
         if (App.state.selectedRuns.has(runId)) {
             App.state.selectedRuns.delete(runId);
             checkbox.classList.remove('bg-brand-600', 'border-brand-600');
-            checkbox.classList.add('bg-white', 'border-gray-300');
+            checkbox.classList.add('bg-transparent', 'border-gray-600');
             icon.classList.add('opacity-0');
+            el.classList.remove('active');
         } else {
             App.state.selectedRuns.add(runId);
-            checkbox.classList.remove('bg-white', 'border-gray-300');
+            checkbox.classList.remove('bg-transparent', 'border-gray-600');
             checkbox.classList.add('bg-brand-600', 'border-brand-600');
             icon.classList.remove('opacity-0');
+            el.classList.add('active');
 
             if (!App.state.runsData[runId]) {
                 await App.loadRunData(runId);
@@ -120,19 +154,6 @@ const App = {
         App.state.runsData[runId] = { metrics, config };
     },
 
-    refreshData: async () => {
-        if (!App.state.currentExperiment) return;
-
-        // Reload active runs
-        for (let runId of App.state.selectedRuns) {
-            await App.loadRunData(runId);
-        }
-        App.renderDashboard();
-
-        const status = document.getElementById('refresh-indicator');
-        if (status) status.innerText = new Date().toLocaleTimeString();
-    },
-
     refresh: () => {
         App.refreshData().then(() => {
             const el = document.getElementById('connection-status');
@@ -143,6 +164,7 @@ const App = {
     },
 
     renderDashboard: () => {
+        App.renderSummary();
         App.renderCharts();
         App.renderStats();
         App.renderConfig();
@@ -150,6 +172,74 @@ const App = {
         if (App.state.selectedRuns.size > 0) {
             const lastRun = Array.from(App.state.selectedRuns).pop();
             if (App.state.activeTab === 'artifacts') App.renderArtifactsTab();
+        }
+    },
+
+    renderSummary: () => {
+        const container = document.getElementById('summary-container');
+        const runs = Array.from(App.state.selectedRuns);
+
+        if (runs.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const runStats = runs.map(runId => {
+            const m = App.state.runsData[runId]?.metrics || [];
+            if (!m.length) return { id: runId, start: '-', duration: '-' };
+
+            const start = new Date(m[0].timestamp);
+            const end = new Date(m[m.length - 1].timestamp);
+
+            // Format start
+            const startStr = start.toLocaleString();
+
+            // Calc duration
+            const diffMs = end - start;
+            const diffSec = Math.floor(diffMs / 1000);
+            const hrs = Math.floor(diffSec / 3600);
+            const mins = Math.floor((diffSec % 3600) / 60);
+            const secs = diffSec % 60;
+            const durStr = `${hrs}h ${mins}m ${secs}s`;
+
+            return { id: runId, start: startStr, duration: durStr, steps: m.length };
+        });
+
+        if (runs.length === 1) {
+            const s = runStats[0];
+            container.innerHTML = `
+                <div class="card p-4 bg-white flex items-center gap-6 text-sm">
+                    <div class="font-semibold text-brand-600">${s.id}</div>
+                    <div class="flex gap-2 text-gray-600"><span class="font-medium">Started:</span> ${s.start}</div>
+                    <div class="flex gap-2 text-gray-600"><span class="font-medium">Duration:</span> ${s.duration}</div>
+                    <div class="flex gap-2 text-gray-600"><span class="font-medium">Steps:</span> ${s.steps}</div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div class="card bg-white overflow-hidden">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2">Run</th>
+                                <th class="px-4 py-2">Started</th>
+                                <th class="px-4 py-2">Duration</th>
+                                <th class="px-4 py-2">Steps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${runStats.map(s => `
+                                <tr class="border-b last:border-0 hover:bg-gray-50">
+                                    <td class="px-4 py-2 font-medium text-brand-600">${s.id}</td>
+                                    <td class="px-4 py-2">${s.start}</td>
+                                    <td class="px-4 py-2">${s.duration}</td>
+                                    <td class="px-4 py-2">${s.steps}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
         }
     },
 
@@ -202,8 +292,8 @@ const App = {
 
         allKeys.forEach(metric => {
             const div = document.createElement('div');
-            div.className = 'card p-4 bg-white shadow-sm';
-            div.style.minHeight = '350px';
+            div.className = 'card p-4 bg-white shadow-sm overflow-hidden';
+            div.style.minHeight = '450px';
             container.appendChild(div);
 
             const traces = runs.map((runId, idx) => {
@@ -220,18 +310,60 @@ const App = {
                 };
             });
 
+            const titleCasedMetric = App._toTitleCase(metric);
+
             const layout = {
-                title: { text: metric, font: { family: 'Inter', size: 16 } },
+                title: {
+                    text: titleCasedMetric,
+                    font: { family: 'Inter', size: 16, color: '#1e293b' },
+                    x: 0.01,
+                    xanchor: 'left'
+                },
                 autosize: true,
-                margin: { l: 50, r: 20, t: 40, b: 50 },
+                margin: { l: 60, r: 20, t: 60, b: 60 }, // Increased top/bottom margins
                 showlegend: true,
-                legend: { orientation: 'h', y: 1.1, x: 0.5, xanchor: 'center', bgcolor: 'rgba(255,255,255,0.5)' },
-                xaxis: { title: 'Step' },
-                font: { family: 'Inter' }
+                legend: { orientation: 'h', y: -0.15, x: 0.5, xanchor: 'center', bgcolor: 'rgba(255,255,255,0)' },
+                xaxis: {
+                    title: 'Step',
+                    titlefont: { size: 12, color: '#64748b' },
+                    tickfont: { size: 11, color: '#64748b' },
+                    gridcolor: '#f1f5f9'
+                },
+                yaxis: {
+                    title: titleCasedMetric,
+                    titlefont: { size: 12, color: '#64748b' },
+                    tickfont: { size: 11, color: '#64748b' },
+                    gridcolor: '#f1f5f9'
+                },
+                font: { family: 'Inter' },
+                hovermode: 'x unified',
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff',
             };
 
-            const config = { responsive: true, displayModeBar: false };
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: [
+                    'lasso2d', 'select2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d',
+                    'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines'
+                ],
+                toImageButtonOptions: {
+                    format: 'png',
+                    filename: `${metric}_plot`,
+                    height: 500,
+                    width: 700,
+                    scale: 2
+                }
+            };
             Plotly.newPlot(div, traces, layout, config);
+        });
+    },
+
+    _toTitleCase: (str) => {
+        return str.replace(/_/g, ' ').replace(/\w\S*/g, (txt) => {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
     },
 

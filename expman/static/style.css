@@ -39,20 +39,25 @@ body {
     width: 6px;
     height: 6px;
 }
+
 ::-webkit-scrollbar-track {
     background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
     background: #cbd5e1;
     border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
 
 .loader {
-    border: 3px solid #f3f3f3; /* Light grey */
-    border-top: 3px solid #3498db; /* Blue */
+    border: 3px solid #f3f3f3;
+    /* Light grey */
+    border-top: 3px solid #3498db;
+    /* Blue */
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -61,6 +66,43 @@ body {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Sidebar Customization */
+.sidebar {
+    background-color: #172554;
+    /* Blue 950 - Rich Dark Blue */
+    color: #94a3b8;
+    /* Slate 400 */
+}
+
+.sidebar .experiment-select {
+    background-color: #1e293b;
+    /* Slate 800 */
+    border-color: #334155;
+    /* Slate 700 */
+    color: #e2e8f0;
+    /* Slate 200 */
+}
+
+.run-item {
+    color: #94a3b8;
+}
+
+.run-item:hover {
+    background-color: #1e293b !important;
+    color: #f1f5f9;
+}
+
+.run-item.active {
+    background-color: #2563eb !important;
+    /* Brand Blue */
+    color: white !important;
 }
