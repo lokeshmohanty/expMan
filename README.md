@@ -1,6 +1,6 @@
-# ExpMan (v0.1.0)
+# ExpManager
 
-`expman` is a lightweight, functional research experiment management library.
+`expmanager` is a lightweight, functional research experiment management library.
 
 ## Features
 
@@ -13,14 +13,14 @@
 ## Installation
 
 ```bash
-pip install expman
+pip install expmanager
 ```
 
 ## Quick Start
 
 1. **Run an Experiment**:
    ```python
-   from expman import Experiment
+   from expmanager import Experiment
    import matplotlib.pyplot as plt
    import torch
    import torchvision
@@ -43,12 +43,12 @@ pip install expman
 
 2. **Launch Dashboard**:
    ```bash
-   expMan serve ./experiments
+   expManager serve ./experiments
    ```
    Open [http://localhost:8000](http://localhost:8000)
 
 3. **Interactive Analysis**:
    Load a run directly into a Python REPL with metrics and config pre-loaded:
    ```bash
-   expMan load experiments/my_experiment/runs/run_001
+   expManager load experiments/my_experiment/runs/run_001
    ```
