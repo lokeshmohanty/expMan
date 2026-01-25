@@ -39,7 +39,7 @@ function getDuration(stat) {
                 <tr>
                     <th class="px-6 py-4">Run Name</th>
                     <th class="px-6 py-4">Created</th>
-                    <th class="px-6 py-4">Duration</th>
+                    <th class="px-6 py-4">Execution Time</th>
                     <template v-if="stats.length > 0">
                         <th v-for="key in Object.keys(stats[0]).filter(k => !['run', 'created', 'step', 'timestamp', 'duration'].includes(k)).slice(0, 5)" :key="key" class="px-6 py-4 capitalize">
                             {{ key }}

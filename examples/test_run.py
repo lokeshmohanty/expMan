@@ -41,12 +41,16 @@ def run_experiment(run_config):
             loss = max(0, 3.0 * math.exp(-epoch/5) + noise)
             acc = min(1.0, 1 - math.exp(-epoch/5) - noise/2)
             
-        metrics = {
-            "epoch": epoch,
-            "loss": loss,
-            "accuracy": acc,
-            "lr": lr
-        }
+        metrics = {"epoch": epoch, "lr": lr}
+        
+        metric_type = run_config.get("metric_type", "standard")
+        if metric_type == "standard":
+             metrics["loss"] = loss
+             metrics["accuracy"] = acc
+        elif metric_type == "score":
+             # Different keys: Score (higher better), Latency (lower better)
+             metrics["score"] = acc * 100
+             metrics["latency_ms"] = 50 + noise * 1000
         
         exp.log_metrics(metrics, step=epoch)
         time.sleep(0.1) # Simulate work
@@ -73,7 +77,8 @@ def main():
         "batch_size": 64,
         "epochs": 15,
         "model_name": "mlp_advanced",
-        "optimizer": "sgd"
+        "optimizer": "sgd",
+        "metric_type": "standard"
     }
     run_experiment(config1)
     
@@ -84,7 +89,8 @@ def main():
         "batch_size": 32,
         "epochs": 20,
         "model_name": "mlp_basic",
-        "optimizer": "adam"
+        "optimizer": "adam",
+        "metric_type": "score"
     }
     run_experiment(config2)
 

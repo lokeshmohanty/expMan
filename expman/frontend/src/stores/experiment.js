@@ -81,7 +81,7 @@ export const useExperimentStore = defineStore('experiment', () => {
 
         try {
             let url = `/api/experiments/${currentExperiment.value}/runs/${runId}/metrics`
-            if (since >= 0) {
+            if (since !== null && since !== undefined && since >= 0) {
                 url += `?since_step=${since}`
             }
 

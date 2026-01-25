@@ -2,6 +2,8 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 from loguru import logger
 import matplotlib.figure
+import atexit
+import datetime
 try:
     import torch
 except ImportError:
@@ -37,6 +39,10 @@ class Experiment:
         # Setup Logging
         self._setup_logger()
         self.logger.info(f"Initialized experiment: {self.experiment_name} / {self.run_name}")
+        
+        self.start_time = datetime.datetime.now()
+        self.is_closed = False
+        atexit.register(self.close)
 
     def _setup_logger(self):
         """Configures loguru to log to a file in the run directory."""
@@ -136,3 +142,31 @@ class Experiment:
 
     def info(self, msg: str):
         self.logger.info(msg)
+
+    def close(self):
+        """
+        Gracefully closes the experiment.
+        Logs duration and status, flushes metrics.
+        Called automatically via atexit.
+        """
+        if self.is_closed:
+            return
+            
+        end_time = datetime.datetime.now()
+        duration = (end_time - self.start_time).total_seconds()
+        
+        self.logger.info(f"Run finished. Duration: {duration:.2f}s")
+        
+        # Log final status metric
+        final_metric = {
+            "status": "FINISHED",
+            "duration": duration,
+            "finished_at": end_time.isoformat()
+        }
+        
+        # We append to buffer and then forced flush
+        self.metrics_buffer.append(final_metric)
+        utils.save_metrics(self.metrics_file, self.metrics_buffer)
+        self.metrics_buffer = [] # Clear
+        
+        self.is_closed = True
