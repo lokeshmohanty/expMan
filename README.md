@@ -12,19 +12,18 @@
   - **Run Comparison**: Overlay metrics from multiple runs on interactive Plotly charts.
   - **Artifact Browser**: Browse and preview all experiment files including auto-generated model architecture graphs.
 
-  - **Artifact Browser**: Browse and preview all experiment files including auto-generated model architecture graphs.
-
-  ![Dashboard Metrics](assets/dashboard-metrics.png)
-  ![Dashboard Artifacts](assets/dashboard-artifacts.png)
+  ![Dashboard Metrics](assets/dashboard_metrics.png)
+  ![Dashboard Artifacts](assets/dashboard_artifacts.png)
 
 ## Installation
 
-**Basic Installation** (Lightweight, no Torch/Graphviz):
+- **Basic Installation** (Lightweight, no Torch/Graphviz):
 ```bash
 pip install git+https://github.com/lokeshmohanty/expManager.git
 ```
 
-**Full Installation** (With PyTorch support for model saving & architecture graphs):
+- **Full Installation** (With PyTorch support for model saving & architecture graphs) 
+   (you can also choose to install torch, torchview and graphviz separately using the basic installation):
 ```bash
 pip install "expman[torch] @ git+https://github.com/lokeshmohanty/expManager.git"
 ```
