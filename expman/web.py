@@ -4,10 +4,9 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 import uvicorn
 from pathlib import Path
-from expman.analysis import ExperimentAnalyzer
-
-
 import math
+
+from expman.analysis import ExperimentAnalyzer
 
 app = FastAPI()
 import os
@@ -15,10 +14,13 @@ analyzer = ExperimentAnalyzer(base_dir=os.environ.get("EXPMAN_BASE_DIR", "experi
 
 # Mount static files
 static_dir = Path(__file__).parent / "static"
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 @app.get("/")
 async def index():
+    if not static_dir.exists():
+        return HTMLResponse("<h1>ExpMan Server Running</h1><p>Frontend assets not found. Use 'expman dev' or build the frontend.</p>")
     return HTMLResponse(content=(static_dir / "index.html").read_text())
 
 @app.get("/api/experiments")

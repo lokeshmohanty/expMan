@@ -88,6 +88,7 @@ def dev_command(args):
             
     print("[dev] Done.")
 
+def serve_command(args):
     """Starts the ExpMan server."""
     host = args.host
     port = args.port

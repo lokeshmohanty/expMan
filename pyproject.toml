@@ -7,7 +7,7 @@ name = "expman"
 version = "0.2.0"
 description = "Manage your experiments exactly as you like"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.12"
 dependencies = [
     "loguru>=0.7.0",
@@ -32,3 +32,6 @@ expman = "expman.cli:main"
 [tool.setuptools.packages.find]
 include = ["expman*"]
 exclude = ["experiments*"]
+
+[tool.setuptools]
+include-package-data = true

@@ -41,6 +41,26 @@ jobs:
           git tag -a "v${{ env.VERSION }}" -m "Release v${{ env.VERSION }}"
           git push origin "v${{ env.VERSION }}"
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build Frontend
+        run: |
+          cd expman/frontend
+          npm ci
+          npm run build
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: .python-version
+
+      - name: Build Backend
+        run: uv build
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -49,3 +69,4 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
+          files: dist/*
