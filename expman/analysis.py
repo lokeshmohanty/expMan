@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import datetime
 import polars as pl
 
 
@@ -59,46 +60,32 @@ class ExperimentAnalyzer:
                 row = df.tail(1).to_dicts()[0]
                 last_metrics = row
                 
-                # Calculate duration
-                # Strategy: 
-                # 1. If 'timestamp' exists in metrics (absolute time), duration = last_timestamp - created_time
-                # 2. If 'relative_time' or similar exists, use that.
-                # 3. If 'step', checking duration per step is hard.
-                # Let's try to parse creation time and compare with last timestamp if available.
-                import datetime
-                try:
-                    created_dt = datetime.datetime.fromisoformat(info.get("created"))
-                    # If metrics have a timestamp column (assumed float seconds or iso string?)
-                    # If it's not standard, we might skip. 
-                    # For now simpliest is: if we have metrics, do we have a 'timestamp' column?
-                    # Usually metrics logger adds 'timestamp'.
-                    if "timestamp" in df.columns:
-                        # Assuming timestamp is seconds since epoch float (common in ML loggers)
-                        last_ts = df["timestamp"][-1]
-                        # If timestamp is very large, it's epoch. If small, it's relative?
-                        # Let's assume epoch for now if > 1e9
-                        if last_ts > 1e9: 
-                           start_ts = created_dt.timestamp()
-                           diff = last_ts - start_ts
-                           if diff > 0:
-                               # Format duration
-                               hours, remainder = divmod(diff, 3600)
-                               minutes, seconds = divmod(remainder, 60)
-                               if hours > 0:
-                                   duration = f"{int(hours)}h {int(minutes)}m"
-                               elif minutes > 0:
-                                   duration = f"{int(minutes)}m {int(seconds)}s"
-                               else:
-                                    duration = f"{int(seconds)}s"
-                except Exception:
-                    pass
+                # Check for explicit duration metric (logged by close())
+                if "duration" in last_metrics:
+                     d_sec = last_metrics["duration"]
+                     duration = utils.format_duration(d_sec)
+                elif "timestamp" in df.columns:
+                     # Attempt to calculate ongoing duration
+                     try:
+                         # Ensure we have a valid creation time
+                         if info.get("created"):
+                             created_dt = datetime.datetime.fromisoformat(info.get("created"))
+                             # Use current time for ongoing
+                             now = datetime.datetime.now()
+                             diff = (now - created_dt).total_seconds()
+                             if diff > 0:
+                                 duration = f"Ongoing ({utils.format_duration(diff)})"
+                     except Exception:
+                         pass
 
-            stats.append({
+            # Merge last_metrics first, then overwrite duration with formatted string
+            entry = {
                 "run": run,
                 "created": info.get("created"),
-                "duration": duration,
                 **last_metrics
-            })
+            }
+            entry["duration"] = duration
+            stats.append(entry)
         
         # Sort by creation time desc (if available) or name
         stats.sort(key=lambda x: x.get("created", ""), reverse=True)

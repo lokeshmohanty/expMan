@@ -57,6 +57,23 @@ async def update_experiment_metadata(experiment_name: str, meta: MetadataUpdate)
     current = utils.load_experiment_metadata(exp_dir)
     current.update(meta.dict())
     utils.save_experiment_metadata(exp_dir, current)
+
+    return current
+
+@app.get("/api/experiments/{experiment_name}/runs/{run_name}/metadata")
+async def get_run_metadata(experiment_name: str, run_name: str):
+    run_dir = analyzer.base_dir / experiment_name / "runs" / run_name
+    from expman import io as utils
+    return utils.load_run_metadata(run_dir)
+
+@app.post("/api/experiments/{experiment_name}/runs/{run_name}/metadata")
+async def update_run_metadata(experiment_name: str, run_name: str, meta: MetadataUpdate):
+    run_dir = analyzer.base_dir / experiment_name / "runs" / run_name
+    from expman import io as utils
+    
+    current = utils.load_run_metadata(run_dir)
+    current.update(meta.dict())
+    utils.save_run_metadata(run_dir, current)
     return current
 
 

@@ -1,9 +1,11 @@
+import shutil
 import time
 import math
 import random
 from expman import Experiment
 
 def main():
+    shutil.rmtree("experiments/live_test_experiment", ignore_errors=True)
     exp = Experiment("live_test_experiment", run_name="run_001")
     exp.log_params({"lr": 0.01, "optimizer": "adam"})
 

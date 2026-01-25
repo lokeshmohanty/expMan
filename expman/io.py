@@ -16,6 +16,17 @@ def get_experiment_dir(base_path: Union[str, Path], experiment_name: str) -> Pat
     """Returns the directory path for an experiment."""
     return Path(base_path) / experiment_name
 
+def format_duration(seconds: float) -> str:
+    """Formats duration in seconds to a human readable string."""
+    hours, remainder = divmod(seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    if hours > 0:
+        return f"{int(hours)}h {int(minutes)}m"
+    elif minutes > 0:
+        return f"{int(minutes)}m {int(seconds)}s"
+    else:
+        return f"{int(seconds)}s"
+
 def get_run_dir(experiment_dir: Path, run_name: Optional[str] = None) -> Path:
     """Returns the directory path for a specific run. If run_name is None, generates one based on timestamp."""
     if run_name is None:
@@ -157,4 +168,13 @@ def load_experiment_metadata(experiment_dir: Path) -> Dict[str, Any]:
 
 def save_experiment_metadata(experiment_dir: Path, metadata: Dict[str, Any]) -> None:
     save_yaml(get_experiment_metadata_path(experiment_dir), metadata)
+
+def get_run_metadata_path(run_dir: Path) -> Path:
+    return run_dir / "run.yaml"
+
+def load_run_metadata(run_dir: Path) -> Dict[str, Any]:
+    return load_yaml(get_run_metadata_path(run_dir))
+
+def save_run_metadata(run_dir: Path, metadata: Dict[str, Any]) -> None:
+    save_yaml(get_run_metadata_path(run_dir), metadata)
 

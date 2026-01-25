@@ -20,8 +20,39 @@ const currentTab = ref('Metrics');
 
 const emit = defineEmits(['edit-metadata'])
 
+// Run Metadata Editing
+const isEditingRunMetadata = ref(false);
+const currentEditingRun = ref(null);
+const runEditForm = ref({ display_name: '', description: '' });
+
 // Derived list of all unique metric keys from selected runs
 const metricKeys = ref(new Set());
+
+function openRunEditModal(runId) {
+    currentEditingRun.value = runId;
+    const meta = store.runsData[runId]?.metadata || {};
+    runEditForm.value = { 
+        display_name: meta.display_name || runId, 
+        description: meta.description || '' 
+    };
+    isEditingRunMetadata.value = true;
+}
+
+async function saveRunMetadata() {
+    if (!currentEditingRun.value) return;
+    await store.updateRunMetadata(currentEditingRun.value, runEditForm.value);
+    
+    // Update local cache manually to reflect immediately
+    if (store.runsData[currentEditingRun.value]) {
+        store.runsData[currentEditingRun.value].metadata = {
+            ...store.runsData[currentEditingRun.value].metadata,
+            ...runEditForm.value
+        };
+    }
+    
+    isEditingRunMetadata.value = false;
+    currentEditingRun.value = null;
+}
 
 // Watch for data changes to update charts
 watch(
@@ -211,15 +242,30 @@ onUnmounted(() => {
                 <div 
                     v-for="runId in store.selectedRuns" 
                     :key="runId" 
-                    class="bg-[#f2e5bc] p-3 rounded-lg shadow-sm border border-[#d5c4a1] flex items-center justify-between"
+                    class="bg-[#f2e5bc] p-3 rounded-lg shadow-sm border border-[#d5c4a1] flex flex-col gap-2"
                 >
-                     <div>
-                        <div class="flex items-center gap-2">
+                     <div class="flex items-center justify-between">
+                         <div class="flex items-center gap-2">
                             <span class="w-3 h-3 rounded-full" :style="{backgroundColor: store.getRunColor(runId)}"></span>
-                            <span class="font-semibold text-[#3c3836]">{{ runId }}</span>
+                            <span class="font-semibold text-[#3c3836]">
+                                {{ store.runsData[runId]?.metadata?.display_name || runId }}
+                            </span>
+                         </div>
+                         <button @click="openRunEditModal(runId)" class="text-xs text-[#d65d0e] hover:underline">
+                            <i class="ri-edit-line"></i> Edit
+                         </button>
+                     </div>
+
+                     <div>
+                        <div class="text-xs text-[#504945] pl-5 " v-if="store.runsData[runId]?.metadata?.description">
+                            {{ store.runsData[runId].metadata.description }}
                         </div>
-                        <div class="text-xs text-[#504945] mt-1 pl-5">
+
+                         <div class="text-xs text-[#504945] mt-1 pl-5">
                             Created: {{ formatTime(store.runsData[runId]?.config?.created || store.experimentStats.find(s => s.run === runId)?.created) }} 
+                        </div>
+                        <div class="text-xs text-[#504945] mt-0.5 pl-5">
+                            Duration: {{ store.experimentStats.find(s => s.run === runId)?.duration || '-' }}
                         </div>
                      </div>
                 </div>
@@ -288,6 +334,29 @@ onUnmounted(() => {
             <div class="flex justify-end gap-2 mt-6">
                 <button @click="isEditingMetadata = false" class="px-4 py-2 text-sm text-[#504945] hover:text-[#3c3836]">Cancel</button>
                 <button @click="saveMetadata" class="px-4 py-2 bg-[#d65d0e] text-[#fbf1c7] rounded hover:bg-[#c3510d] text-sm font-semibold">Save</button>
+            </div>
+        </div>
+    </div>
+
+  <!-- Run Metadata Edit Modal -->
+    <div v-if="isEditingRunMetadata" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-[#fbf1c7] p-6 rounded-lg w-full max-w-md border border-[#d5c4a1] shadow-xl">
+            <h3 class="text-lg font-bold text-[#3c3836] mb-4">Edit Run Details</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-[#504945] mb-1">Display Name</label>
+                    <input v-model="runEditForm.display_name" class="w-full p-2 rounded bg-[#f2e5bc] border border-[#d5c4a1] focus:border-[#d65d0e] outline-none text-[#3c3836]" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-[#504945] mb-1">Description</label>
+                    <textarea v-model="runEditForm.description" rows="3" class="w-full p-2 rounded bg-[#f2e5bc] border border-[#d5c4a1] focus:border-[#d65d0e] outline-none text-[#3c3836]"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 mt-6">
+                <button @click="isEditingRunMetadata = false" class="px-4 py-2 text-sm text-[#504945] hover:text-[#3c3836]">Cancel</button>
+                <button @click="saveRunMetadata" class="px-4 py-2 bg-[#d65d0e] text-[#fbf1c7] rounded hover:bg-[#c3510d] text-sm font-semibold">Save</button>
             </div>
         </div>
     </div>

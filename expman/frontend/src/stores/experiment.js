@@ -73,7 +73,15 @@ export const useExperimentStore = defineStore('experiment', () => {
             } catch (e) {
                 console.error(`Failed to load config for ${runId}`, e)
             }
+
+            // Fetch Metadata
+            try {
+                runsData.value[runId].metadata = await fetchRunMetadata(runId)
+            } catch (e) {
+                console.error(`Failed to load metadata for ${runId}`, e)
+            }
         }
+
 
         // Fetch Metrics (Incremental)
         const cached = runsData.value[runId]
@@ -162,6 +170,37 @@ export const useExperimentStore = defineStore('experiment', () => {
         }
     }
 
+    async function fetchRunMetadata(runId) {
+        if (!currentExperiment.value || !runId) return {}
+        try {
+            const res = await fetch(`/api/experiments/${currentExperiment.value}/runs/${runId}/metadata`)
+            return await res.json()
+        } catch (e) {
+            console.error(`Failed to fetch metadata for run ${runId}`, e)
+            return {}
+        }
+    }
+
+    async function updateRunMetadata(runId, meta) {
+        if (!currentExperiment.value || !runId) return {}
+        try {
+            const res = await fetch(`/api/experiments/${currentExperiment.value}/runs/${runId}/metadata`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(meta)
+            })
+            const updated = await res.json()
+
+            // Update logic if we stash run metadata in cache:
+            // runsData.value[runId].metadata = updated
+            // For now, caller handles UI update or we refresh
+            return updated
+        } catch (e) {
+            console.error(`Failed to update metadata for run ${runId}`, e)
+            throw e
+        }
+    }
+
     return {
         experiments,
         currentExperiment,
@@ -179,6 +218,8 @@ export const useExperimentStore = defineStore('experiment', () => {
         toggleRun,
         refreshAll,
         getRunColor,
-        fetchArtifacts
+        fetchArtifacts,
+        fetchRunMetadata,
+        updateRunMetadata
     }
 })
