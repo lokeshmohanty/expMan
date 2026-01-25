@@ -11,7 +11,9 @@ wheels/
 
 # Generated folders
 experiments/*
-expman/static/*
+
+# Moved it to .git/info/exclude as this folder is required during packaging
+# expman/static/*
 
 # Frontend
 **/node_modules/

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "expman"
-version = "0.2.1"
+version = "0.2.3"
 description = "Manage your experiments exactly as you like"
 readme = "README.md"
 license = "MIT"
@@ -32,9 +32,3 @@ expman = "expman.cli:main"
 [tool.setuptools.packages.find]
 include = ["expman*"]
 exclude = ["experiments*"]
-
-[tool.setuptools]
-include-package-data = true
-
-[tool.setuptools.package-data]
-"expman" = ["static/**/*", "static/*"]
