@@ -29,6 +29,14 @@ pip install git+https://github.com/lokeshmohanty/expManager.git
 pip install "expman[torch] @ git+https://github.com/lokeshmohanty/expManager.git"
 ```
 
+## Development
+
+To develop `expman` (with frontend watch and backend reload):
+```bash
+expman dev
+```
+
+
 ## Quick Start
 
 1. **Run an Experiment**:

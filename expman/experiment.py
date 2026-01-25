@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Any, Dict, Optional
-import sys
 from loguru import logger
 import matplotlib.figure
 try:
@@ -8,7 +7,7 @@ try:
 except ImportError:
     torch = None
 
-from . import utils
+from . import io as utils
 
 class Experiment:
     """
