@@ -1,22 +1,21 @@
 name: Create Release
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
-    inputs:
-      release_notes:
-        description: 'Release Notes (Leave empty to use auto-generated changelog)'
-        required: false
-        type: string
 
 jobs:
   release:
-    name: Create Release Tag
+    name: Create Release
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (contains(github.event.head_commit.message, 'bump') && contains(github.event.head_commit.message, 'version'))
     permissions:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -42,9 +41,9 @@ jobs:
           git push origin "v${{ env.VERSION }}"
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Build Frontend
         run: |
@@ -53,10 +52,10 @@ jobs:
           npm run build
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
-          python-version: .python-version
+          python-version: 3.13
 
       - name: Build Backend
         run: uv build

@@ -1,6 +1,6 @@
 # ExpMan: Experiment Manager
 
-![GitHub Release](https://img.shields.io/github/v/release/lokeshmohanty/expManager)
+![GitHub Release](https://img.shields.io/github/v/release/lokeshmohanty/expMan)
 
 `expman` is a lightweight, functional research experiment management library.
 
@@ -19,13 +19,13 @@
 
 - **Basic Installation** (Lightweight, no Torch/Graphviz):
 ```bash
-pip install git+https://github.com/lokeshmohanty/expManager.git
+pip install git+https://github.com/lokeshmohanty/expMan.git
 ```
 
 - **Full Installation** (With PyTorch support for model saving & architecture graphs) 
    (you can also choose to install torch, torchview and graphviz separately using the basic installation):
 ```bash
-pip install "expman[torch] @ git+https://github.com/lokeshmohanty/expManager.git"
+pip install "expman[torch] @ git+https://github.com/lokeshmohanty/expMan.git"
 ```
 
 ## Development
