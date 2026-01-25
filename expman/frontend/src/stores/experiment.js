@@ -138,6 +138,30 @@ export const useExperimentStore = defineStore('experiment', () => {
         return colors[Math.abs(hash) % colors.length]
     }
 
+    // State for experiment overview stats
+    const experimentStats = ref([])
+    const experimentMetadata = ref({})
+
+    async function fetchExperimentStats(name) {
+        if (!name) return
+        try {
+            const res = await fetch(`/api/experiments/${name}/stats`)
+            experimentStats.value = await res.json()
+        } catch (e) {
+            console.error("Failed to fetch experiment stats", e)
+        }
+    }
+
+    async function fetchExperimentMetadata(name) {
+        if (!name) return
+        try {
+            const res = await fetch(`/api/experiments/${name}/metadata`)
+            experimentMetadata.value = await res.json()
+        } catch (e) {
+            console.error("Failed to fetch experiment metadata", e)
+        }
+    }
+
     return {
         experiments,
         currentExperiment,
@@ -145,9 +169,13 @@ export const useExperimentStore = defineStore('experiment', () => {
         selectedRuns,
         serverConfig,
         runsData,
+        experimentStats,
+        experimentMetadata,
         fetchExperiments,
         selectExperiment,
         fetchRuns,
+        fetchExperimentStats,
+        fetchExperimentMetadata,
         toggleRun,
         refreshAll,
         getRunColor,

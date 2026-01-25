@@ -9,11 +9,16 @@ export default defineConfig({
     base: '/static/',
     build: {
         outDir: '../static',
-        emptyOutDir: true,
+        emptyOutDir: false,
         rollupOptions: {
             input: {
                 main: path.resolve(__dirname, 'index.html'),
             },
+            output: {
+                manualChunks: {
+                    plotly: ['plotly.js-dist-min'],
+                }
+            }
         }
     }
 })

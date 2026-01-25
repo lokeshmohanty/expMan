@@ -9,4 +9,13 @@ wheels/
 # Virtual environments
 .venv
 
+# Generated folders
 experiments/*
+expman/static/*
+
+# Frontend
+**/node_modules/
+**/dist/
+**/npm-debug.log*
+*.log
+

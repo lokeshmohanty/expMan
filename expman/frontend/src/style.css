@@ -4,6 +4,32 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Gruvbox Light Theme */
+  --color-bg-main: #fbf1c7;
+  /* bg */
+  --color-bg-soft: #f2e5bc;
+  /* bg1 */
+  --color-fg-main: #3c3836;
+  /* fg1 */
+  --color-fg-sub: #504945;
+  /* fg2 */
+
+  --color-red: #cc241d;
+  --color-green: #98971a;
+  --color-yellow: #d79921;
+  --color-blue: #458588;
+  --color-purple: #b16286;
+  --color-aqua: #689d6a;
+  --color-orange: #d65d0e;
+}
+
+body {
+  background-color: var(--color-bg-main);
+  color: var(--color-fg-main);
+  font-family: 'Inter', sans-serif;
+}
+
 body {
   @apply bg-slate-50 text-slate-900 font-sans antialiased;
 }
@@ -19,9 +45,9 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 rounded-full;
+  @apply bg-[#d5c4a1] rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-400;
+  @apply bg-[#bdae93];
 }

@@ -1,12 +1,10 @@
 import shutil
-from pathlib import Path
 import random
 import math
 import time
 
 try:
     import torch
-    import torchvision
 except ImportError:
     torch = None
 
@@ -57,19 +55,16 @@ def run_experiment(run_config):
     if torch:
         print("Saving mock model...")
         # Create a dummy model just for saving
-        if "resnet" in model_name:
-            model = torchvision.models.resnet18()
-        else:
-            model = torch.nn.Linear(10, 2)
+        model = torch.nn.Linear(100, 10)
             
-        exp.save_model(model, "final_model.pt", input_size=(1, 3, 224, 224) if "resnet" in model_name else None)
+        exp.save_model(model, "final_model.pt", input_size=(1, 100))
     
     print(f"Finished Run: {exp.run_name}")
     print("-" * 30)
 
 def main():
     # Clean up previous tests
-    # shutil.rmtree("experiments/test_experiment", ignore_errors=True)
+    shutil.rmtree("experiments/test_experiment", ignore_errors=True)
     
     # Run 1: High LR, ResNet
     config1 = {
@@ -77,7 +72,7 @@ def main():
         "lr": 0.01,
         "batch_size": 64,
         "epochs": 15,
-        "model_name": "resnet18",
+        "model_name": "mlp_advanced",
         "optimizer": "sgd"
     }
     run_experiment(config1)
