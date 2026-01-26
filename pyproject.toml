@@ -1,6 +1,6 @@
 [project]
 name = "ra-expman"
-version = "0.2.6"
+version = "0.2.7"
 authors = [
   { name="Lokesh Mohanty", email="lokesh1197@gmail.com" },
 ]
