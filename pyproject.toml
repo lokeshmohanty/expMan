@@ -1,13 +1,26 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "expman"
 version = "0.2.5"
+authors = [
+  { name="Lokesh Mohanty", email="lokesh1197@gmail.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Logging",
+    "Framework :: FastAPI",
+]
 description = "Manage your experiments exactly as you like"
 readme = "README.md"
 license = "MIT"
+license-files = ["LICEN[CS]E*"]
 requires-python = ">=3.12"
 dependencies = [
     "loguru>=0.7.0",
@@ -29,12 +42,21 @@ torch = [
 [project.scripts]
 expman = "expman.cli:main"
 
-[tool.setuptools.packages.find]
-include = ["expman*"]
-exclude = ["experiments*"]
+[build-system]
+requires = ["uv_build>=0.9.26,<0.10.0"]
+build-backend = "uv_build"
 
-[tool.setuptools]
-include-package-data = true
+[tool.uv.build-backend]
+module-name = "expman"
+module-root = ""
+source-exclude = ["expman/frontend"]
 
-[tool.setuptools.package-data]
-"expman" = ["static/**/*", "static/*"]
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
+
+[project.urls]
+Homepage = "https://github.com/lokeshmohanty/expman"
+Issues = "https://github.com/lokeshmohanty/expman/issues"
