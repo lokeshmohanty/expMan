@@ -13,6 +13,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (contains(github.event.head_commit.message, 'bump') && contains(github.event.head_commit.message, 'version'))
     permissions:
       contents: write
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -69,3 +70,9 @@ jobs:
           draft: false
           prerelease: false
           files: dist/*
+
+      - name: Publish to PyPI
+        env:
+          UV_PUBLISH_USERNAME: "__token__"
+          UV_PUBLISH_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish

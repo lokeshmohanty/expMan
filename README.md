@@ -1,6 +1,9 @@
 # ExpMan: Experiment Manager
 
+[![PyPI version](https://img.shields.io/pypi/v/ra-expman.svg)](https://pypi.org/project/ra-expman/)
+[![Python versions](https://img.shields.io/pypi/pyversions/ra-expman.svg)](https://pypi.org/project/ra-expman/)
 ![GitHub Release](https://img.shields.io/github/v/release/lokeshmohanty/expMan)
+[![License](https://img.shields.io/pypi/l/ra-expman.svg)](https://github.com/lokeshmohanty/expman/blob/main/LICENSE)
 
 `expman` is a lightweight, functional research experiment management library.
 
@@ -12,20 +15,20 @@
   - **Run Comparison**: Overlay metrics from multiple runs on interactive Plotly charts.
   - **Artifact Browser**: Browse and preview all experiment files including auto-generated model architecture graphs.
 
-  ![Dashboard Metrics](assets/dashboard_metrics.png)
-  ![Dashboard Artifacts](assets/dashboard_artifacts.png)
+  ![Dashboard Metrics](https://github.com/lokeshmohanty/expman/blob/main/assets/dashboard_metrics.png)
+  ![Dashboard Artifacts](https://github.com/lokeshmohanty/expman/blob/main/assets/dashboard_artifacts.png)
 
 ## Installation
 
 - **Basic Installation** (Lightweight, no Torch/Graphviz):
 ```bash
-pip install git+https://github.com/lokeshmohanty/expMan.git
+pip install ra-expman
 ```
 
 - **Full Installation** (With PyTorch support for model saving & architecture graphs) 
    (you can also choose to install torch, torchview and graphviz separately using the basic installation):
 ```bash
-pip install "expman[torch] @ git+https://github.com/lokeshmohanty/expMan.git"
+pip install "ra-expman[torch]"
 ```
 
 ## Development
@@ -73,4 +76,4 @@ expman dev
    expman load experiments/my_experiment/runs/run_001
    ```
 
-   ![Interactive Analysis Preview](assets/interactive_analysis_preview.png)
+   ![Interactive Analysis Preview](https://github.com/lokeshmohanty/expman/blob/main/assets/interactive_analysis_preview.png)
