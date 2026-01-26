@@ -1,11 +1,10 @@
 [project]
 name = "ra-expman"
-version = "0.2.5"
+version = "0.2.6"
 authors = [
   { name="Lokesh Mohanty", email="lokesh1197@gmail.com" },
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
