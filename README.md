@@ -1,5 +1,9 @@
 # ExpMan: Experiment Manager
 
+
+> Note: deprecated in favour of [expman-rs](github.com/lokeshmohanty/expman-rs/)
+
+
 [![PyPI version](https://img.shields.io/pypi/v/ra-expman.svg)](https://pypi.org/project/ra-expman/)
 [![Python versions](https://img.shields.io/pypi/pyversions/ra-expman.svg)](https://pypi.org/project/ra-expman/)
 ![GitHub Release](https://img.shields.io/github/v/release/lokeshmohanty/expMan)
